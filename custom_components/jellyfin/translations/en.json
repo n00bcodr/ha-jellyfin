@@ -1,0 +1,30 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Jellyfin",
+        "description": "Configure your Jellyfin Server",
+        "data": {
+          "host": "Host",
+          "api_key": "API Key",
+          "port": "Port",
+          "ssl": "Use SSL"
+        },
+        "data_description": {
+            "host": "IP of your Jellyfin server (e.g., 192.168.1.10)",
+            "api_key": "Your Jellyfin API Key (Generate one in Server Dashboard > API Keys)",
+            "port": "Port number for the Jellyfin server (default is 8096)",
+            "ssl": "n/a"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to Jellyfin server",
+      "invalid_auth": "Invalid authentication credentials",
+      "unknown": "Unexpected error occurred"
+    },
+    "abort": {
+      "already_configured": "Jellyfin server is already configured"
+    }
+  }
+}
