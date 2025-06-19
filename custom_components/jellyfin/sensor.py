@@ -28,6 +28,9 @@ async def async_setup_entry(
     for sensor_type in SENSOR_TYPES:
         entities.append(JellyfinSensor(coordinator, sensor_type, config_entry))
 
+    # Add upcoming media sensor for upcoming-media-card
+    entities.append(JellyfinUpcomingSensor(coordinator, config_entry))
+
     async_add_entities(entities)
 
 
@@ -99,6 +102,7 @@ class JellyfinSensor(CoordinatorEntity, SensorEntity):
             attributes.update({
                 "server_name": system_info.get("ServerName"),
                 "server_id": system_info.get("Id"),
+                "total_sessions": len(sessions),
             })
 
             session_list = []
@@ -107,6 +111,10 @@ class JellyfinSensor(CoordinatorEntity, SensorEntity):
                     "user_name": session.get("UserName", "Unknown"),
                     "client": session.get("Client", "Unknown"),
                     "device_name": session.get("DeviceName", "Unknown"),
+                    "device_id": session.get("DeviceId", ""),
+                    "application_version": session.get("ApplicationVersion", ""),
+                    "remote_end_point": session.get("RemoteEndPoint", ""),
+                    "supports_remote_control": session.get("SupportsRemoteControl", False),
                     "last_activity_date": session.get("LastActivityDate", ""),
                 }
 
@@ -131,6 +139,49 @@ class JellyfinSensor(CoordinatorEntity, SensorEntity):
             attributes["latest"] = data.get("latest_music", [])
 
         return attributes
+
+    @property
+    def device_info(self) -> dict[str, Any]:
+        """Return device information."""
+        system_info = self.coordinator.data.get("system_info", {}) if self.coordinator.data else {}
+
+        return {
+            "identifiers": {(DOMAIN, self._config_entry.entry_id)},
+            "name": f"Jellyfin Server ({system_info.get('ServerName', 'Unknown')})",
+            "manufacturer": "Jellyfin",
+            "model": "Media Server",
+            "sw_version": system_info.get("Version"),
+        }
+
+
+class JellyfinUpcomingSensor(CoordinatorEntity, SensorEntity):
+    """Sensor for upcoming media data for upcoming-media-card."""
+
+    def __init__(self, coordinator, config_entry: ConfigEntry) -> None:
+        """Initialize the upcoming media sensor."""
+        super().__init__(coordinator)
+        self._config_entry = config_entry
+
+        self._attr_name = "Jellyfin Upcoming Media"
+        self._attr_icon = "mdi:calendar-clock"
+        self._attr_unique_id = f"{config_entry.entry_id}_upcoming_media"
+        self._attr_entity_category = None
+
+    @property
+    def native_value(self) -> int:
+        """Return the number of upcoming items."""
+        if not self.coordinator.data or "upcoming_media" not in self.coordinator.data:
+            return 0
+        return len(self.coordinator.data["upcoming_media"])
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return upcoming media data for upcoming-media-card."""
+        if not self.coordinator.data or "upcoming_media" not in self.coordinator.data:
+            return {"data": []}
+
+        # Return the formatted data directly from the API
+        return {"data": self.coordinator.data["upcoming_media"]}
 
     @property
     def device_info(self) -> dict[str, Any]:

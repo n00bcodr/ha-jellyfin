@@ -2,19 +2,15 @@
   "config": {
     "step": {
       "user": {
-        "title": "Jellyfin",
-        "description": "Configure your Jellyfin Server",
+        "title": "Jellyfin Configuration",
+        "description": "Configure your connection.",
         "data": {
-          "host": "Host",
-          "api_key": "API Key",
-          "port": "Port",
-          "ssl": "Use SSL"
+          "url": "Server URL",
+          "api_key": "API Key"
         },
         "data_description": {
-            "host": "IP of your Jellyfin server (e.g., 192.168.1.10)",
-            "api_key": "Your Jellyfin API Key (Generate one in Server Dashboard > API Keys)",
-            "port": "Port number for the Jellyfin server (default is 8096)",
-            "ssl": "n/a"
+            "url": "Example: Internal URLs (http://192.168.1.100:8096) or external URLs (https://jellyfin.example.com:443)",
+            "api_key": "Your Jellyfin API Key (Generate one in Server Dashboard > API Keys)"
         }
       }
     },

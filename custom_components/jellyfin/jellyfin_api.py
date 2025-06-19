@@ -110,11 +110,47 @@ class JellyfinAPI:
                 "music": 0,
             }
 
+    async def get_upcoming_media(self) -> list[dict[str, Any]]:
+        """Get upcoming TV episodes for upcoming-media-card."""
+        try:
+            # Get upcoming episodes with comprehensive fields
+            fields = "Overview,Genres,Studios,Tags,CommunityRating,OfficialRating,ProductionYear,PremiereDate,DateCreated,RunTimeTicks,SeriesName,ParentIndexNumber,IndexNumber,SeriesId"
+            endpoint = f"Shows/Upcoming?Limit=50&Fields={fields}"
+
+            response = await self._request(endpoint)
+            items = response.get("Items", [])
+
+            # Format items for upcoming-media-card compatibility
+            formatted_items = []
+            for item in items:
+                formatted_item = {
+                    "title": item.get("Name", ""),
+                    "episode": item.get("IndexNumber"),
+                    "season": item.get("ParentIndexNumber"),
+                    "series": item.get("SeriesName", ""),
+                    "airdate": item.get("PremiereDate", ""),
+                    "poster": self.get_image_url(item.get("Id", "")) if item.get("Id") else None,
+                    "fanart": self.get_image_url(item.get("SeriesId", ""), "Backdrop") if item.get("SeriesId") else None,
+                    "overview": item.get("Overview", ""),
+                    "genres": item.get("Genres", []),
+                    "studio": item.get("Studios", [{}])[0].get("Name", "") if item.get("Studios") else "",
+                    "rating": item.get("CommunityRating"),
+                    "runtime": int(item.get("RunTimeTicks", 0) / 10000000) if item.get("RunTimeTicks") else 0,
+                    "id": item.get("Id", ""),
+                }
+                formatted_items.append(formatted_item)
+
+            return formatted_items
+
+        except Exception as err:
+            _LOGGER.error("Error fetching upcoming media: %s", err)
+            return []
+
     async def get_latest_media(self, media_type: str, limit: int = 30) -> list[dict[str, Any]]:
         """Get latest media items of specified type."""
         try:
             # Get latest items with comprehensive fields
-            fields = "Overview,Genres,Studios,Tags,CommunityRating,OfficialRating,ProductionYear,PremiereDate,DateCreated,RunTimeTicks,SeriesName,ParentIndexNumber,IndexNumber"
+            fields = "Overview,Genres,Studios,Tags,CommunityRating,OfficialRating,ProductionYear,PremiereDate,DateCreated,RunTimeTicks,SeriesName,ParentIndexNumber,IndexNumber,SeriesId"
 
             if media_type == "Episode":
                 endpoint = f"Items?IncludeItemTypes={media_type}&Recursive=true&SortBy=DateCreated&SortOrder=Descending&Limit={limit}&Fields={fields}"
@@ -224,6 +260,15 @@ class JellyfinAPI:
     async def shutdown_server(self) -> None:
         """Shutdown the Jellyfin server."""
         await self._request("System/Shutdown", method="POST")
+
+    async def send_message_to_session(self, session_id: str, message: str, header: str = "Home Assistant", timeout: int = 5000) -> None:
+        """Send a message to a specific session."""
+        data = {
+            "Text": message,
+            "Header": header,
+            "TimeoutMs": timeout
+        }
+        await self._request(f"Sessions/{session_id}/Message", method="POST", data=data)
 
     def get_image_url(self, item_id: str, image_type: str = "Primary", max_width: int = 300) -> str:
         """Get image URL for an item."""
