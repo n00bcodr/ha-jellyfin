@@ -1,5 +1,5 @@
 {
-    "name": "Jellyfin API Integration",
+    "name": "ha-jellyfin",
     "filename": "ha-jellyfin.zip",
     "hide_default_branch": true,
     "homeassistant": "2025.3.0",

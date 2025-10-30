@@ -1,4 +1,4 @@
-# Jellyfin Home Assistant Integration
+# ha-jellyfin
 
 A comprehensive Home Assistant integration for Jellyfin media server that provides sensors and media player entities using API key authentication.
 
@@ -15,14 +15,14 @@ A comprehensive Home Assistant integration for Jellyfin media server that provid
 
 ### Manual Installation
 
-1. Copy the `custom_components/jellyfin` folder to your Home Assistant `config/custom_components/` directory
+1. Copy the `custom_components/ha-jellyfin` folder to your Home Assistant `config/custom_components/` directory
 2. Restart Home Assistant
 
 ## Configuration
 
 1. In Home Assistant, go to **Settings** > **Devices & Services**
 2. Click **Add Integration**
-3. Search for "Jellyfin" and select it
+3. Search for "ha-jellyfin" and select it
 4. Fill in the configuration form:
    - **Host**: Your Jellyfin server IP address or hostname
    - **Port**: Your Jellyfin server port (default: 8096)
