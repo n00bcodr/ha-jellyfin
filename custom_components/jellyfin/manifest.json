@@ -1,6 +1,6 @@
 {
-  "domain": "ha-jellyfin",
-  "name": "ha-jellyfin",
+  "domain": "jellyfin",
+  "name": "Jellyfin",
   "codeowners": [
     "@n00bcodr"
   ],
@@ -11,7 +11,7 @@
   "iot_class": "local_push",
   "issue_tracker": "https://github.com/n00bcodr/ha-jellyfin/issues",
   "loggers": [
-    "custom_components.ha-jellyfin"
+    "custom_components.jellyfin"
   ],
   "requirements": [],
   "ssdp": [],

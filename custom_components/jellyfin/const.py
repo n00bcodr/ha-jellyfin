@@ -1,11 +1,11 @@
-"""Constants for the ha-jellyfin integration."""
+"""Constants for the Jellyfin integration."""
 
 from typing import Any
 
 from enum import StrEnum
 from homeassistant.components.media_player import MediaClass, MediaType
 
-DOMAIN = "ha-jellyfin"
+DOMAIN = "jellyfin"
 
 CONF_API_KEY = "api_key"
 

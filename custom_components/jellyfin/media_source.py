@@ -49,7 +49,7 @@ async def async_get_media_source(hass: HomeAssistant) -> MediaSource:
 class MBSource(MediaSource):
     """Provide Jellyfin servers as media sources."""
 
-    name: str = "ha-jellyfin"
+    name: str = "Jellyfin"
 
     def __init__(self, hubs: list[MediaBrowserHub]) -> None:
         """Create a new media source."""
@@ -113,15 +113,15 @@ class MBSource(MediaSource):
 
     async def _async_browse_hubs(self) -> BrowseMediaSource:
         source = BrowseMediaSource(
-        domain=DOMAIN,
-        identifier=None,
-        media_class=MediaClass.DIRECTORY,
-        media_content_type="",
-        title="ha-jellyfin",
-        can_play=False,
-        can_expand=True,
-        thumbnail=JELLYFIN_ICON,
-    )
+            domain=DOMAIN,
+            identifier=None,
+            media_class=MediaClass.DIRECTORY,
+            media_content_type="",
+            title="Jellyfin",
+            can_play=False,
+            can_expand=True,
+            thumbnail=JELLYFIN_ICON,
+        )
         source.children = [
             await self._async_browse(hub, None, False) for hub in self.hubs.values()
         ]
