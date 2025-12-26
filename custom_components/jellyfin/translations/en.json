@@ -58,7 +58,8 @@
                     "events": "Events configuration",
                     "add_sensor": "Add a sensor",
                     "remove_sensor": "Remove a sensor",
-                    "advanced": "Advanced options"
+                    "advanced": "Advanced options",
+                    "maintenance": "Maintenance"
                 }
             },
             "auth": {
@@ -150,6 +151,16 @@
                     "device_id": "Device name to be reported in Jellyfin server",
                     "device_version": "Device version to be reported in Jellyfin server",
                     "timeout": "How much time to wait (in seconds) to consider that your Jellyfin server is down"
+                }
+            }
+            ,
+            "maintenance": {
+                "title": "Maintenance",
+                "data": {
+                    "purge_devices": "Purge orphaned devices"
+                },
+                "data_description": {
+                    "purge_devices": "Removes devices that no longer have active sessions"
                 }
             }
         },

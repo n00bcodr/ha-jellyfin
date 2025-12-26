@@ -246,6 +246,7 @@ class MediaBrowserOptionsFlow(OptionsFlow):
                 "add_sensor",
                 "remove_sensor",
                 "advanced",
+                "maintenance",
             ],
         )
 
@@ -573,6 +574,26 @@ class MediaBrowserOptionsFlow(OptionsFlow):
                             CONF_TIMEOUT, self.options.get(CONF_TIMEOUT)
                         ),
                     ): vol.All(vol.Coerce(int), vol.Range(min=1, max=300)),
+                }
+            ),
+        )
+
+    async def async_step_maintenance(
+        self, user_input: dict[str, Any] | None
+    ) -> FlowResult:
+        """Handle the maintenance step (e.g., purge orphaned devices)."""
+        if user_input:
+            if user_input.get("purge_devices", False):
+                await self.hass.services.async_call(
+                    DOMAIN, SERVICE_PURGE_DEVICES, {}, True
+                )
+            return self.async_create_entry(title="", data=self.options)
+
+        return self.async_show_form(
+            step_id="maintenance",
+            data_schema=vol.Schema(
+                {
+                    vol.Required("purge_devices", default=False): bool,
                 }
             ),
         )
