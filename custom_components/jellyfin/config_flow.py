@@ -609,10 +609,18 @@ async def _validate_config(
     save_url = options.get(CONF_URL)
     save_api_key = options.get(CONF_API_KEY)
 
-    if url is not None:
-        options[CONF_URL] = url
-    if api_key is not None:
-        options[CONF_API_KEY] = api_key
+    resolved_url = url or save_url
+    resolved_api_key = api_key or save_api_key
+
+    if resolved_url is None:
+        errors["base"] = "bad_request"
+        return False
+    if resolved_api_key is None:
+        errors["base"] = "invalid_auth"
+        return False
+
+    options[CONF_URL] = resolved_url
+    options[CONF_API_KEY] = resolved_api_key
 
     hub = MediaBrowserHub(options)
     try:
