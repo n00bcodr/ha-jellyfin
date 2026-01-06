@@ -6,7 +6,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import DATA_HUB, DOMAIN, ENTITY_TITLE_MAP, EntityType
+from .const import DATA_HUB, DOMAIN, ENTITY_TITLE_MAP, EntityType, SERVICE_PURGE_DEVICES
 from .entity import MediaBrowserEntity
 from .hub import MediaBrowserHub
 
@@ -23,6 +23,7 @@ async def async_setup_entry(
             MediaBrowserRescanButton(hub),
             MediaBrowserRestartButton(hub),
             MediaBrowserShutdownButton(hub),
+            MediaBrowserClearSessionsButton(hub),
         ]
     )
 
@@ -77,3 +78,18 @@ class MediaBrowserRescanButton(MediaBrowserEntity, ButtonEntity):
 
     async def async_press(self) -> None:
         await self.hub.async_rescan()
+
+
+class MediaBrowserClearSessionsButton(MediaBrowserEntity, ButtonEntity):
+    """Representation of a button to clear orphaned session devices."""
+
+    _attr_entity_category = EntityCategory.CONFIG
+    _attr_icon = "mdi:trash-can"
+
+    def __init__(self, hub: MediaBrowserHub) -> None:
+        super().__init__(hub)
+        self._attr_name = f"{self.hub.server_name} Clear Sessions"
+        self._attr_unique_id = f"{self.hub.server_id}-clear-sessions"
+
+    async def async_press(self) -> None:
+        await self.hass.services.async_call(DOMAIN, SERVICE_PURGE_DEVICES, {}, True)
