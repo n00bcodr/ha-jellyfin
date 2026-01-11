@@ -100,7 +100,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         purged_count = 0
         for device in devices:
             # Skip the main server device
-            if device.via_device is None:
+            if device.via_device_id is None:
                 continue
 
             # Extract session ID from device identifiers
