@@ -236,6 +236,20 @@ class MediaBrowserOptionsFlow(OptionsFlow):
         self, user_input: dict[str, Any] | None = None  # pylint: disable=W0613
     ) -> FlowResult:
         """Handle the initial step."""
+        # Ensure critical options exist to prevent 500 errors
+        if CONF_URL not in self.options or CONF_API_KEY not in self.options:
+            # Try to migrate from data if available
+            if CONF_URL in self.config_entry.data:
+                self.options[CONF_URL] = self.config_entry.data[CONF_URL]
+            if CONF_API_KEY in self.config_entry.data:
+                self.options[CONF_API_KEY] = self.config_entry.data[CONF_API_KEY]
+            
+            # Update the entry with migrated options
+            if CONF_URL in self.options and CONF_API_KEY in self.options:
+                self.hass.config_entries.async_update_entry(
+                    self.config_entry, options=self.options
+                )
+        
         return self.async_show_menu(
             step_id="init",
             menu_options=[
@@ -253,6 +267,12 @@ class MediaBrowserOptionsFlow(OptionsFlow):
     async def async_step_auth(self, user_input: dict[str, Any] | None) -> FlowResult:
         """Handle the authentication step."""
         errors: dict[str, str] = {}
+        
+        # Ensure URL exists before validating
+        if CONF_URL not in self.options:
+            errors["base"] = "bad_request"
+            return self.async_abort(reason="missing_url")
+        
         if user_input:
             if await _validate_config(
                 self.options,
